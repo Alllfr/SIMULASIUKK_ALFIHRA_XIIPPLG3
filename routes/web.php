@@ -50,13 +50,15 @@ Route::middleware(['auth','admin'])->group(function () {
     Route::delete('/admin/delete/{id}',
         [DataKamarController::class,'destroy']
     )->name('admin.delete');
+    
     Route::get('/admin/reservasi',
         [ReservasiController::class,'index']
     )->name('admin.reservasi');
 
-    Route::put('/admin/reservasi/{id}',
-        [ReservasiController::class,'updateStatus']
-    )->name('admin.reservasi.update');
+   Route::put('/admin/reservasi/{id}/status', 
+    [ReservasiController::class, 'updateStatus']
+)->name('reservasi.updateStatus');
+
 
 });
 

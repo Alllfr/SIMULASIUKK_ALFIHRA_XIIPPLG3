@@ -102,6 +102,44 @@
             padding:35px;
             border-radius:20px;
             box-shadow:0 20px 40px rgba(0,0,0,0.08);
+
+                }
+        .search-box{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:25px;
+            gap:15px;
+        }
+
+        .search-input{
+            flex:1;
+            padding:10px 15px;
+            border-radius:12px;
+            border:2px solid #facc15;
+            outline:none;
+            font-size:14px;
+            transition:.3s;
+        }
+
+        .search-input:focus{
+            border-color:#b45309;
+            box-shadow:0 0 0 3px #fde68a;
+        }
+
+        .search-btn{
+            padding:10px 20px;
+            border-radius:12px;
+            border:none;
+            background:#facc15;
+            color:#78350f;
+            font-weight:600;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        .search-btn:hover{
+            background:#f59e0b;
+            color:white;
         }
 
         table{
@@ -140,6 +178,51 @@
         .menunggu{background:#fef9c3;color:#854d0e;}
         .selesai{background:#dcfce7;color:#166534;}
         .batal{background:#fee2e2;color:#991b1b;}
+
+        .action-btn{
+            padding:7px 14px;
+            border-radius:12px;
+            border:2px solid transparent;
+            font-size:12px;
+            font-weight:600;
+            cursor:pointer;
+            transition:.3s;
+            margin:3px;
+        }
+
+        .checkin-btn{
+            background:#fef3c7;
+            color:#92400e;
+            border-color:#facc15;
+        }
+
+        .checkin-btn:hover{
+            background:#facc15;
+            color:white;
+        }
+
+        .selesai-btn{
+            background:#dcfce7;
+            color:#166534;
+            border-color:#86efac;
+        }
+
+        .selesai-btn:hover{
+            background:#22c55e;
+            color:white;
+        }
+
+        .batal-btn{
+            background:#fde2e2;
+            color:#7f1d1d;
+            border-color:#fecaca;
+        }
+
+        .batal-btn:hover{
+            background:#f87171;
+            color:white;
+        }
+
     </style>
 </head>
 <body>
@@ -161,6 +244,16 @@
 <h2>DATA RESERVASI HOTEL</h2>
 
 <div class="card">
+ <div class="search-box">
+    <form action="{{ route('admin.reservasi') }}" method="GET" style="display:flex; width:100%; gap:15px;">
+        <input type="text" 
+               name="search" 
+               class="search-input"
+               placeholder="Cari ID Reservasi atau Nama Tamu..."
+               value="{{ request('search') }}">
+        <button type="submit" class="search-btn">Cari</button>
+    </form>
+</div>
 
 <table>
 <thead>
@@ -190,10 +283,36 @@
     <td>Rp {{ number_format($r->total_bayar,0,',','.') }}</td>
     <td>
         <span class="badge 
-            {{ $r->status_reservasi == 'Menunggu' ? 'menunggu' : 
-               ($r->status_reservasi == 'Selesai' ? 'selesai' : 'batal') }}">
+            {{ $r->status_reservasi == 'Booking' ? 'menunggu' : 
+               ($r->status_reservasi == 'Check-in' ? 'menunggu' :
+               ($r->status_reservasi == 'Selesai' ? 'selesai' : 'batal')) }}">
             {{ $r->status_reservasi }}
         </span>
+
+        <div style="margin-top:8px;">
+            @if($r->status_reservasi == 'Booking')
+                <form action="{{ route('reservasi.updateStatus',$r->id_reservasi) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status" value="Check-in">
+                    <button type="submit" class="action-btn checkin-btn">Check-in</button>
+                </form>
+
+                <form action="{{ route('reservasi.updateStatus',$r->id_reservasi) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status" value="Batal">
+                    <button type="submit" class="action-btn batal-btn">Batalkan</button>
+                </form>
+            @elseif($r->status_reservasi == 'Check-in')
+                <form action="{{ route('reservasi.updateStatus',$r->id_reservasi) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status" value="Selesai">
+                    <button type="submit" class="action-btn selesai-btn">Selesai</button>
+                </form>
+            @endif
+        </div>
     </td>
 </tr>
 @endforeach

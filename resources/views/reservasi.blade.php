@@ -4,33 +4,36 @@
     <title>Booking Kamar Hotel</title>
     <style>
         body{
-            background:linear-gradient(120deg,#f8fbff,#eef2ff);
+            background:linear-gradient(120deg,#fffdf5,#f0fdfa);
             font-family:'Segoe UI',Arial,sans-serif;
-            padding:40px;
+            padding:50px;
             color:#334155;
         }
+
         h2{
             text-align:center;
-            margin-bottom:25px;
-            color:#475569;
+            margin-bottom:30px;
+            color:#0f766e;
             letter-spacing:1px;
         }
+
         form{
-            max-width:480px;
+            max-width:520px;
             margin:auto;
             background:white;
-            padding:30px;
-            border-radius:22px;
-            box-shadow:0 20px 45px rgba(0,0,0,.06);
-            animation:fade .6s ease;
+            padding:35px;
+            border-radius:25px;
+            box-shadow:0 20px 45px rgba(0,0,0,.08);
         }
+
         label{
             display:block;
-            margin-top:14px;
+            margin-top:15px;
             font-size:14px;
             color:#64748b;
         }
-        input, select{
+
+        input{
             width:100%;
             padding:12px 14px;
             margin-top:6px;
@@ -40,55 +43,71 @@
             transition:.3s;
             background:#fbfdff;
         }
-        input:focus, select:focus{
-            border-color:#a5b4fc;
-            box-shadow:0 0 0 3px rgba(165,180,252,.3);
+
+        input:focus{
+            border-color:#5eead4;
+            box-shadow:0 0 0 3px rgba(94,234,212,.3);
         }
-        .info{
-            margin:10px 0;
-            padding:12px;
-            background:#eef2ff;
-            border-radius:14px;
+
+        .info-box{
+            background:linear-gradient(120deg,#fef9c3,#ccfbf1);
+            padding:16px;
+            border-radius:18px;
+            margin-bottom:20px;
             font-size:14px;
-            color:#3730a3;
+            color:#065f46;
         }
+
+        .total-box{
+            margin-top:20px;
+            padding:16px;
+            border-radius:18px;
+            background:#dcfce7;
+            color:#166534;
+            font-weight:600;
+            display:none;
+        }
+
         .btn-group{
             display:flex;
-            gap:12px;
-            margin-top:24px;
+            gap:15px;
+            margin-top:25px;
         }
+
         button{
             flex:1;
             padding:12px;
             border:none;
-            border-radius:16px;
-            background:#c7d2fe;
-            color:#3730a3;
-            font-size:15px;
+            border-radius:18px;
+            background:#facc15;
+            color:#78350f;
+            font-weight:600;
             cursor:pointer;
             transition:.3s;
-            font-weight:600;
         }
+
         button:hover{
-            background:#a5b4fc;
+            background:#eab308;
             transform:translateY(-3px);
-            box-shadow:0 12px 25px rgba(165,180,252,.4);
         }
+
         .btn-cancel{
-            background:#fde2e2;
-            color:#7f1d1d;
+            flex:1;
+            padding:12px;
+            border-radius:18px;
+            background:#ccfbf1;
+            color:#065f46;
+            text-align:center;
             text-decoration:none;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            border-radius:16px;
-            transition:.3s;
             font-weight:600;
+            transition:.3s;
         }
+
         .btn-cancel:hover{
-            background:#fecaca;
+            background:#99f6e4;
             transform:translateY(-3px);
         }
+
         .error{
             margin-top:12px;
             color:#dc2626;
@@ -96,34 +115,27 @@
             text-align:center;
             display:none;
         }
-        @keyframes fade{
-            from{opacity:0; transform:translateY(15px)}
-            to{opacity:1; transform:translateY(0)}
-        }
     </style>
 </head>
 <body>
 
 <h2>FORM BOOKING KAMAR</h2>
 
-<form action="{{ route('reservasi.store') }}" method="POST" onsubmit="return validasiTanggal()">
+<form action="{{ route('reservasi.store') }}" method="POST" oninput="hitungTotal()" onsubmit="return validasiTanggal()">
 @csrf
 
-<label>Pilih Kamar</label>
-<select name="id_kamar" required>
-    <option value="">-- Pilih Kamar --</option>
-    @foreach($kamar as $k)
-        <option value="{{ $k->id_kamar }}">
-            No {{ $k->nomor_kamar }} - {{ $k->tipe_kamar }} (Rp {{ number_format($k->harga_kamar,0,',','.') }}/malam)
-        </option>
-    @endforeach
-</select>
+<input type="hidden" name="id_kamar" value="{{ $kamar->id_kamar }}">
+
+<div class="info-box">
+    <strong>Kamar:</strong> No {{ $kamar->nomor_kamar }} - {{ $kamar->tipe_kamar }} <br>
+    <strong>Harga per malam:</strong> Rp <span id="harga">{{ $kamar->harga_kamar }}</span>
+</div>
 
 <label>Nama Tamu</label>
-<input type="text" name="nama_tamu" placeholder="Masukkan nama lengkap" required>
+<input type="text" name="nama_tamu" required>
 
 <label>No Handphone</label>
-<input type="text" name="no_hp" pattern="[0-9]+" inputmode="numeric" required>
+<input type="text" name="no_hp" pattern="[0-9]+" required>
 
 <label>Tanggal Check In</label>
 <input type="date" id="check_in" name="check_in" required>
@@ -133,6 +145,11 @@
 
 <label>Jumlah Tamu</label>
 <input type="number" name="jumlah_tamu" min="1" required>
+
+<div id="totalBox" class="total-box">
+    <div id="keterangan"></div>
+    <div id="totalHarga"></div>
+</div>
 
 <div id="error" class="error">
 Tanggal check-out tidak boleh lebih awal dari check-in
@@ -146,6 +163,28 @@ Tanggal check-out tidak boleh lebih awal dari check-in
 </form>
 
 <script>
+function hitungTotal(){
+    const harga = parseInt(document.getElementById('harga').innerText)
+    const checkin = new Date(document.getElementById('check_in').value)
+    const checkout = new Date(document.getElementById('check_out').value)
+    const totalBox = document.getElementById('totalBox')
+
+    if(checkin && checkout && checkout > checkin){
+        const selisih = (checkout - checkin) / (1000*60*60*24)
+        const total = selisih * harga
+
+        document.getElementById('keterangan').innerText =
+            "Rp " + harga.toLocaleString('id-ID') + " x " + selisih + " malam"
+
+        document.getElementById('totalHarga').innerText =
+            "Total Bayar: Rp " + total.toLocaleString('id-ID')
+
+        totalBox.style.display = 'block'
+    } else {
+        totalBox.style.display = 'none'
+    }
+}
+
 function validasiTanggal(){
     const checkin = document.getElementById('check_in').value
     const checkout = document.getElementById('check_out').value
@@ -155,6 +194,7 @@ function validasiTanggal(){
         error.style.display = 'block'
         return false
     }
+
     error.style.display = 'none'
     return true
 }

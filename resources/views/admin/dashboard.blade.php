@@ -238,7 +238,7 @@
 <div class="navbar">
     <div class="nav-left">
         <a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a>
-        <a href="{{ route('admin.reservasi') }}" class="nav-link">Data Reservasi</a>
+        <a href="{{ route('admin.reservasi') }}" class="nav-link">Riwayat Reservasi</a>
         <a href="{{ route('welcome') }}" class="nav-link">Beranda</a>
     </div>
 
@@ -298,11 +298,14 @@
             <button class="action-btn edit">Edit</button>
         </a>
 
-        <form action="{{ route('admin.delete',$k->id_kamar) }}" method="POST" style="display:inline;">
-            @csrf
-            @method('DELETE')
-            <button class="action-btn delete">Hapus</button>
-        </form>
+      <form action="{{ route('admin.delete', $k->id_kamar) }}" method="POST" 
+      onsubmit="return confirm('Yakin ingin menghapus kamar ini?')"
+      style="display:inline;">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="action-btn delete">Hapus</button>
+</form>
+
     </td>
 </tr>
 @endforeach

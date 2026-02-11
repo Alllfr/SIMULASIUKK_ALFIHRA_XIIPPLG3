@@ -198,7 +198,7 @@
     <img src="{{ asset('assets/backgroundhotel3.jpg') }}" alt="Hotel">
 
     <div class="hero-text">
-        <h1>Nikmati Pengalaman Menginap Terbaik</h1>
+        <h1>Nikmati Pengalaman Menginap Terbaik di Nusantara Stay</h1>
         <p>Temukan kamar dengan kenyamanan premium, harga terbaik, dan pelayanan profesional untuk liburan maupun perjalanan bisnis Anda.</p>
 
         <div class="stats">

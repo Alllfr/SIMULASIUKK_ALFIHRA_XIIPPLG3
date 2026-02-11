@@ -176,7 +176,7 @@
         </select>
 
         <div class="button-group">
-            <button type="submit" class="btn">Update</button>
+            <button type="submit" class="btn">Perbarui</button>
             <a href="{{ route('admin.dashboard') }}" class="btn-cancel">Batalkan</a>
         </div>
     </form>

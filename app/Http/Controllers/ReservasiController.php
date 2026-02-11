@@ -23,11 +23,12 @@ class ReservasiController extends Controller
     return view('admin.reservasi', compact('reservasi'));
 }
 
-    public function create()
-    {
-        $kamar = DataKamar::where('status_kamar', 'Tersedia')->get();
-        return view('reservasi', compact('kamar'));
-    }
+   public function create(Request $request)
+{
+    $kamar = DataKamar::where('id_kamar', $request->id_kamar)->firstOrFail();
+    return view('reservasi', compact('kamar'));
+}
+
 
     public function store(Request $request)
     {
