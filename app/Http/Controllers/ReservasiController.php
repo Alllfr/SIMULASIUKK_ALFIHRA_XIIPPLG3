@@ -66,7 +66,7 @@ class ReservasiController extends Controller
             'status_kamar' => 'Tidak Tersedia'
         ]);
 
-        return redirect()->route('welcome')
+       return redirect()->to(route('welcome').'#daftar')
             ->with('success', 'Reservasi berhasil dibuat');
     }
 
@@ -97,4 +97,5 @@ class ReservasiController extends Controller
 
         return redirect()->back()->with('success','Status berhasil diubah');
     }
+
 }

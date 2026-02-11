@@ -146,7 +146,6 @@
         }
 
         .btn:hover{
-            color:white;
         }
 
         .btn:hover::before{
@@ -229,7 +228,6 @@
 
         .delete:hover{
             background:#f87171;
-            color:white;
         }
     </style>
 </head>
@@ -268,6 +266,19 @@
     </div>
 
 </div>
+
+@if(session('error'))
+<div style="background:#fee2e2;color:#991b1b;padding:12px;border-radius:10px;margin-bottom:15px;">
+    {{ session('error') }}
+</div>
+@endif
+
+@if(session('success'))
+<div style="background:#dcfce7;color:#166534;padding:12px;border-radius:10px;margin-bottom:15px;">
+    {{ session('success') }}
+</div>
+@endif
+
 
 <table>
 <thead>

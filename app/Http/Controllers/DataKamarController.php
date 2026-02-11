@@ -65,7 +65,6 @@ class DataKamarController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id_kamar' => 'required|unique:data_kamar,id_kamar',
             'nomor_kamar' => 'required|unique:data_kamar,nomor_kamar,' . $id . ',id_kamar',
             'tipe_kamar' => 'required',
             'harga_kamar' => 'required|numeric|min:0',
@@ -75,7 +74,6 @@ class DataKamarController extends Controller
         $kamar = DataKamar::findOrFail($id);
 
         $kamar->update([
-            'id_kamar' => $request->id_kamar,
             'nomor_kamar' => $request->nomor_kamar,
             'tipe_kamar' => $request->tipe_kamar,
             'harga_kamar' => $request->harga_kamar,
@@ -85,9 +83,23 @@ class DataKamarController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Kamar berhasil diupdate');
     }
 
-    public function destroy($id)
-    {
-        DataKamar::findOrFail($id)->delete();
-        return redirect()->route('admin.dashboard')->with('success', 'Kamar berhasil dihapus');
+  public function destroy($id)
+{
+    $kamar = DataKamar::with('reservasi')->findOrFail($id);
+
+    $aktif = $kamar->reservasi()
+        ->whereIn('status_reservasi', ['Booking', 'Check-in'])
+        ->exists();
+
+    if ($aktif) {
+        return redirect()->route('admin.dashboard')
+            ->with('error', 'Kamar tidak bisa dihapus karena masih dalam status Booking atau Check-in');
     }
+
+    $kamar->delete();
+
+    return redirect()->route('admin.dashboard')
+        ->with('success', 'Kamar berhasil dihapus');
+}
+
 }
